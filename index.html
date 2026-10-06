@@ -103,7 +103,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <header class="heading"><div><div class="eyebrow">MOBILE SPECTRUM ATLAS</div><h1>移动通信频谱</h1><p class="intro">按频宽展开每一段频谱。点击色块置灰，再次点击恢复；文字与频段框架始终保留。</p></div><a id="github" class="tool github" href="https://github.com/AkariYueChan/Mobile-Communication-Bands-Allocation-In-PRC" target="_blank" rel="noopener noreferrer" title="打开 GitHub"><svg viewBox="0 0 16 16" width="19" height="19" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub ↗ <span id="githubHint"></span></a></header>
 <div class="legend" aria-label="运营商颜色图例"><span class="key"><i class="swatch" style="background:var(--mobile)"></i>中国移动</span><span class="key"><i class="swatch" style="background:var(--telecom)"></i>中国电信</span><span class="key"><i class="swatch" style="background:var(--unicom)"></i>中国联通</span><span class="key"><i class="swatch" style="background:var(--broadcast)"></i>中国广电</span><span class="key"><i class="swatch shared"></i>共建共享（条纹）</span><span class="key"><i class="swatch" style="background:var(--other)"></i>铁路 / 集群</span></div>
 <div class="toolbar"><div class="tools"><button id="exportButton" class="tool export-button">导出 · A3 频谱图</button><select id="jump" class="tool" aria-label="跳转至频段"><option value="">跳转频段</option></select><button class="tool primary" id="restore">恢复全部色块</button><button class="tool" id="mute">全部置灰</button><button class="tool primary" id="summarize">汇总未置灰频段</button><button class="tool" id="fit">紧凑比例</button><label class="zoom">显示大小 <input id="zoom" type="range" min="50" max="150" step="5" value="75"><span id="zoomValue">75%</span></label></div><div class="status" id="status" aria-live="polite"></div></div>
-<div class="notes"><p>每个频段独立适应行宽，行内色块按频宽比例绘制。NR 与 LTE/UMTS 合并在同一外框内，共用上方频率刻度（MHz），浅色横线区分制式。FDD 分别绘制上行与下行，配对色块同步置灰；上行频点未单列时不作推算。不同频段之间不比较色块的绝对长度。</p></div>
+<div class="notes"><p>每个频段独立适应行宽，行内色块按频宽比例绘制。NR 与 LTE/UMTS 合并在同一外框内，共用上方频率刻度（MHz），浅色横线区分制式。FDD 分别绘制上行与下行，配对色块同步置灰。不同频段之间不比较色块的绝对长度。</p></div>
 <section id="summaryPanel" class="summary-panel" hidden aria-label="未置灰频段汇总">
 <div class="summary-actions"><h2>未置灰频段汇总</h2><div class="tools"><button id="printSummary" class="tool primary">打印汇总 / 保存 PDF</button><button id="closeSummary" class="tool">收起汇总</button></div></div>
 <p id="summaryMeta"></p><div id="summaryTable"></div><div id="summaryNotes"></div>
@@ -121,16 +121,16 @@ const OP={M:{name:'中国移动',color:'#c9e8fc'},T:{name:'中国电信',color:'
 const cell=(id,start,end,tech,arfcn,ops,bw='',note='')=>({id,start,end,tech,arfcn,ops,bw:bw||`${end-start} MHz`,note});
 const lane=(name,cells)=>({name,cells});
 const bands=[
-{id:'b28',title:'700 MHz',label:'Band 28',mode:'FDD',rows:[2,3],start:758,end:803,note:'上行 703–748 MHz。n28B 为部分地区试验配置；原表另注 n83 SUL 试验。',lanes:()=>[lane('NR',[cell('28a',758,788,'n28A','152650',['M','G'],'30 MHz ×2'),cell('28b',788,803,'n28B','158650',['G'],'15 MHz ×2')])]},
+{id:'b28',title:'700 MHz',label:'Band 28',mode:'FDD',rows:[2,3],start:758,end:803,note:'上行 703–748 MHz。n28B 为部分地区试验配置；n83 SUL 仅对应上行的补充上行试验配置。',lanes:()=>[lane('NR',[{...cell('28a',758,788,'n28A','152650',['M','G'],'30 MHz ×2'),uplinkTech:'n28A/n83 SUL'},cell('28b',788,803,'n28B','158650',['G'],'15 MHz ×2')])]},
 {id:'cluster',title:'800 MHz',label:'集群系统',mode:'FDD',rows:[4],start:851,end:866,note:'上行 806–821 MHz。集群系统专用频段。',lanes:()=>[lane('2G',[cell('cluster',851,866,'集群','—',['S'],'15 MHz ×2')])]},
 {id:'b5',title:'850 MHz',label:'Band 5',mode:'FDD · HDSS',rows:[5,6],start:870,end:885,choices:[['10','10 MHz ×2'],['15','15 MHz ×2（部分地区）']],default:'10',note:'上行 825–835 / 840 MHz。10 与 15MHz 为替代配置；10MHz 时末端保留未选配置范围。',lanes:v=>[lane('NR',[cell('5nr'+v,870,870+Number(v),'n5 · HDSS',v==='15'?'176190':'174750',['T'],v+' MHz ×2')]),lane('LTE',[cell('5lte'+v,870,870+Number(v),'B5','2452',['T'],v+' MHz ×2')])]},
 {id:'b8',title:'900 MHz',label:'Band 8',mode:'FDD · HDSS',rows:[7,8,9,10],start:930,end:959,note:'上行 885–914 MHz。移动 LTE 在偏远地区与广电共享；联通 HDSS 在偏远地区与电信共享。原表另注 n81 SUL。',lanes:()=>[lane('NR',[cell('8nr',949,959,'n8 · HDSS','190350',['U'],'10 MHz ×2','4G/5G HDSS')]),lane('LTE / 2G',[cell('gsmr',930,934,'GSM-R','—',['R'],'4 MHz ×2'),cell('8lteM',934,944,'B8','3590',['M'],'10 MHz ×2'),cell('gsm',944,949,'GSM / NB-IoT','—',['M'],'5 MHz ×2'),cell('8lteU',949,959,'B8','3740',['U'],'10 MHz ×2')])]},
-{id:'b3',title:'1800 MHz',label:'Band 3',mode:'FDD · HDSS',rows:[11,12,13,14,15],start:1805,end:1880,note:'上行 1710–1785 MHz。n3 HDSS 覆盖电信/联通下行 1830–1880MHz、上行 1735–1785MHz，与下方三个 LTE 区块共享 50MHz。1425 仅部分地区存在现网；电信 / 联通可能存在频点或频段位移。',lanes:()=>[lane('NR',[cell('3nr',1830,1880,'n3 · HDSS','368930 / 370850',['T','U'],'50 MHz ×2','电信/联通 HDSS，与 LTE 共享频谱')]),lane('LTE',[cell('3a',1805,1825,'B3','1300',['M','G'],'20 MHz ×2'),cell('3b',1825,1830,'B3','1425',['M','G'],'5 MHz ×2'),cell('3c',1830,1840,'B3','1506',['T','U'],'10 MHz ×2'),cell('3d',1840,1860,'B3','1650',['T','U'],'20 MHz ×2'),cell('3e',1860,1880,'B3','1825 / 1850',['T','U'],'20 MHz ×2')])]},
-{id:'b39',title:'1900 MHz',label:'Band 39',mode:'TDD',rows:[16,17],start:1885,end:1915,choices:[['20','20 + 10 MHz'],['15','15 + 15 MHz']],default:'20',note:'两种区块划分按原表成组切换。部分地区作为 NSA 锚点或试验 n98 SUL。',lanes:v=>[lane('LTE',v==='20'?[cell('39a20',1885,1905,'B39','38400',['M']),cell('39b10',1905,1915,'B39','38544',['M'])]:[cell('39a15',1885,1900,'B39','38375',['M']),cell('39b15',1900,1915,'B39','38525',['M'])])]},
-{id:'b34',title:'2000 MHz',label:'Band 34',mode:'TDD',rows:[18],start:2010,end:2025,note:'TD-SCDMA 重耕频段；部分地区试验 n95 SUL。',lanes:()=>[lane('LTE',[cell('34',2010,2025,'B34','36275',['M'])])]},
+{id:'b3',title:'1800 MHz',label:'Band 3',mode:'FDD · HDSS',rows:[11,12,13,14,15],start:1805,end:1880,note:'上行 1710–1785 MHz。n3 HDSS 覆盖电信/联通下行 1830–1880MHz、上行 1735–1785MHz，与下方三个 LTE 区块共享 50MHz。1425 仅部分地区存在现网；电信 / 联通可能存在频点或频段位移。',lanes:()=>[lane('NR',[cell('3nr',1830,1880,'n3 · HDSS','368930 / 370850',['T','U'],'50 MHz ×2','电信/联通 HDSS，与 LTE 共享频谱')]),lane('LTE',[cell('3a',1805,1825,'B3','1300',['M','G'],'20 MHz ×2'),cell('3b',1825,1830,'B3','1425',['M'],'5 MHz ×2'),cell('3c',1830,1840,'B3','1506',['T','U'],'10 MHz ×2'),cell('3d',1840,1860,'B3','1650',['T','U'],'20 MHz ×2'),cell('3e',1860,1880,'B3','1825 / 1850',['T','U'],'20 MHz ×2')])]},
+{id:'b39',title:'1900 MHz',label:'Band 39',mode:'LTE TDD / NR SUL',rows:[16,17],start:1885,end:1915,choices:[['20','20 + 10 MHz'],['15','15 + 15 MHz']],default:'20',note:'两种区块划分按原表成组切换。部分地区作为 NSA 锚点或试验 n98 SUL。',lanes:v=>[lane('NR SUL',[{...cell('98sul',1885,1915,'n98 SUL','-',['M'],'30 MHz','仅补充上行'),uplinkOnly:true}]),lane('LTE',v==='20'?[cell('39a20',1885,1905,'B39','38400',['M']),cell('39b10',1905,1915,'B39','38544',['M'])]:[cell('39a15',1885,1900,'B39','38375',['M']),cell('39b15',1900,1915,'B39','38525',['M'])])]},
+{id:'b34',title:'2000 MHz',label:'Band 34',mode:'LTE TDD / NR SUL',rows:[18],start:2010,end:2025,note:'TD-SCDMA 重耕频段；部分地区试验 n95 SUL。',lanes:()=>[lane('NR SUL',[{...cell('95sul',2010,2025,'n95 SUL','-',['M'],'15 MHz','仅补充上行'),uplinkOnly:true}]),lane('LTE',[cell('34',2010,2025,'B34','36275',['M'])])]},
 {id:'b1',title:'2100 MHz',label:'Band 1',mode:'FDD',rows:[19,20,21,22],start:2110,end:2170,choices:[['20','NR 20 MHz'],['40','NR 40 MHz'],['45','NR 45 MHz（部分地区）']],default:'40',note:'上行 1920–1980 MHz。NR 以 E1–E9 的合并范围作布局示意；频点未逐一绑定带宽。LTE 按 20MHz 配置绘制（原表亦列 15MHz）；NR 20MHz 对齐 B1 300（下行 2130–2150MHz）；铁路开关独立于 NR 配置，开启后覆盖 UMTS，显示联通/铁路NR-R。',lanes:v=>[lane('NR',[cell('1nr'+v,v==='20'?2130:2110,v==='45'?2155:2150,'n1','422910 / 428910 / 422930 / 423630',['T','U'],v+' MHz ×2','频点照录原表 G19:G21；此处不推定每个频点的配置对应关系。')]),lane('LTE / UMTS',[cell('1a',2110,2130,'B1','75 / 100',['T','U'],'20 MHz ×2','原表可用带宽 15/20MHz；此处按区块边界画20MHz。'),cell('1b',2130,2150,'B1','300',['T','U'],'20 MHz ×2'),railEnabled?cell('1rail',2150,2170,'B1','500',['U','Q'],'20 MHz ×2','联通/铁路NR-R；铁路试验频段，仅部分地区'):cell('1umts',2150,2155,'UMTS','10763',['U'],'5 MHz ×2','仅部分地区；与 NR 层为替代或重耕关系')])]},
 {id:'b40',title:'2300 MHz',label:'Band 40',mode:'TDD',rows:[23,24,25,26,27],start:2300,end:2390,note:'仅室内。NR 465850 为中国移动单独运营的 50MHz，覆盖 2320–2370MHz，对齐下方三个 LTE 区块（20 + 20 + 10MHz）。电信区块原表标注“未见现网”。',lanes:()=>[lane('NR',[cell('40nr',2320,2370,'n40','465850',['M'],'50 MHz','部分地区试验重耕；覆盖三个 LTE 区块')]),lane('LTE',[cell('40a',2300,2320,'B40','38750',['U']),cell('40b',2320,2340,'B40','38950',['M','G']),cell('40c',2340,2360,'B40','39148',['M','G']),cell('40d',2360,2370,'B40','39292',['M','G']),cell('40e',2370,2390,'B40','—',['T'],'20 MHz','未见现网')])]},
-{id:'b41',title:'2600 MHz',label:'Band 38 / 41',mode:'TDD',rows:[28,29,30,31,32,33,34,35],start:2515,end:2675,note:'NR 100MHz 对齐 D4–D2，60MHz 对齐 D3 / D7 / D8。B38 仅中国移动、仅农村地区；507150 / 525150 为高铁专网频点。',lanes:()=>[lane('NR',[cell('41nr100',2515,2615,'n41','504990 / 507150',['M','G'],'100 MHz'),cell('41nr60',2615,2675,'n41','524910 / 533070 / 525150',['M','G'],'60 MHz')]),lane('LTE',[cell('38a',2575,2595,'B38','37900',['M']),cell('38b',2595,2615,'B38','38098',['M']),cell('41a',2615,2635,'B41','40936',['M','G']),cell('41b',2635,2655,'B41','41134',['M','G']),cell('41c',2655,2675,'B41','41332',['M','G'])])]},
+{id:'b41',title:'2600 MHz',label:'Band 38 / 41',mode:'TDD',rows:[28,29,30,31,32,33,34,35],start:2515,end:2675,note:'NR 100MHz 对齐 D4–D2，60MHz 对齐 D3 / D7 / D8。B38 仅中国移动、仅农村地区；507150 / 525150 为高铁专网频点。',lanes:()=>[lane('NR',[cell('41nr100',2515,2615,'n41','504990 / 507150',['M','G'],'100 MHz'),cell('41nr60',2615,2675,'n41','524910 / 533070 / 525150',['M','G'],'60 MHz')]),lane('LTE',[cell('38a',2575,2595,'B38','37900',['M']),cell('38b',2595,2615,'B38','38098',['M']),cell('41a',2615,2635,'B41','40936',['M','G']),cell('41b',2635,2655,'B41','41134',['M']),cell('41c',2655,2675,'B41','41332',['M'])])]},
 {id:'b78',title:'3500 MHz',label:'Band 78',mode:'TDD',rows:[36,37,38,39,40],start:3300,end:3800,note:'3300–3400MHz 仅室内，电信 / 联通 / 广电三家共享。627744 / 634464 为高铁专网；移动 3600–3800MHz 为部分地区试验配置。',lanes:()=>[lane('NR',[cell('78a',3300,3400,'n78','620640 / 623328',['T','U','G']),cell('78b',3400,3500,'n78','627264 / 627744',['T','U']),cell('78c',3500,3600,'n78','633984 / 634464',['T','U']),cell('78d',3600,3700,'n78','643296',['M']),cell('78e',3700,3800,'n78','649920',['M'])])]},
 {id:'b79',title:'4800 MHz',label:'Band 79',mode:'TDD',rows:[41,42,43],start:4800,end:5000,choices:[['100','100 + 100 MHz'],['60','100 + 60 MHz']],default:'100',note:'4900MHz 起的 60 / 100MHz 为替代配置，100MHz 仅部分地区。颜色按原表移动 / 广电共享；频谱到 5000MHz 截止，不延伸未列频谱。',lanes:v=>[lane('NR',[cell('79a',4800,4900,'n79','721824 / 723360',['M','G']),cell('79b'+v,4900,4900+Number(v),'n79',v==='60'?'727968':'727968 / 729504',['M','G'])])]},
 {id:'b258',title:'26 GHz',label:'Band 258',mode:'TDD',rows:[44],start:26500,end:27300,note:'仅试验站，原表注明非测试卡不可接入。四个 200MHz 载波分别绘制。',lanes:()=>[lane('NR', ['2055833','2059165','2062497','2065829'].map((f,i)=>cell('258_'+i,26500+i*200,26700+i*200,'n258',f,['U'])))]}
@@ -156,12 +156,13 @@ function fill(ops){if(ops.length===1)return OP[ops[0]].color;return `repeating-l
 function refreshStatus(){const all=currentRecords(),n=selectedRecords().length;document.getElementById('status').innerHTML=`<strong>${n}</strong> / ${all.length} 组亮显 · ${all.length-n} 已置灰`;if(!document.getElementById('summaryPanel').hidden)renderSummary();}
 function setState(button,isOff){button.classList.toggle('off',isOff);button.setAttribute('aria-pressed',String(!isOff));}
 function syncState(){document.querySelectorAll('.cell').forEach(btn=>setState(btn,off.has(btn.dataset.id)));save();refreshStatus();}
+function techLabel(c,direction){return direction==='ul'&&c.uplinkTech?c.uplinkTech:c.tech;}
 function drawPlot(b,container){
  container.replaceChildren();container.dataset.span=b.end-b.start;container.style.width='100%';const lanes=b.lanes(configs[b.id]);
  const ticks=[...new Set([b.start,b.end,...lanes.flatMap(l=>l.cells.flatMap(c=>[c.start,c.end]))])].sort((a,b)=>a-b);
- const directions=isFdd(b)?[{name:'下行 DL',key:'dl',offset:0},{name:'上行 UL',key:'ul',offset:uplinkOffset[b.id]}]:[{name:'上下行共用 TDD',key:'tdd',offset:0}];
+ const directions=isFdd(b)?[{name:'下行 DL',key:'dl',offset:0},{name:'上行 UL',key:'ul',offset:uplinkOffset[b.id]}]:[{name:b.mode.includes('SUL')?'LTE 上下行 / NR 补充上行':'上下行共用 TDD',key:'tdd',offset:0}];
  for(const direction of directions){
-  const heading=el('div','direction-title',direction.name);heading.append(el('span','',direction.key==='ul'?'MHz · 上行频点原表未单列':'MHz'));container.append(heading);
+  const heading=el('div','direction-title',direction.name);heading.append(el('span','','MHz'));container.append(heading);
   const scale=el('div','scale');scale.setAttribute('aria-label',direction.name+' 共用频率刻度，MHz');
   for(const n of ticks){const t=el('span','tick',n-direction.offset);t.style.left=`${(n-b.start)/(b.end-b.start)*100}%`;t.style.transform=n===b.start?'none':n===b.end?'translateX(-100%)':'translateX(-50%)';scale.append(t);}container.append(scale);
   const frame=el('div','spectrum-frame');frame.dataset.direction=direction.key;
@@ -171,10 +172,11 @@ function drawPlot(b,container){
     const btn=el('button','cell'),start=c.start-direction.offset,end=c.end-direction.offset;btn.type='button';btn.dataset.id=c.id;btn.dataset.direction=direction.key;btn.dataset.start=start;btn.dataset.end=end;
     btn.style.left=`${(c.start-b.start)/(b.end-b.start)*100}%`;btn.style.width=`${(c.end-c.start)/(b.end-b.start)*100}%`;btn.style.setProperty('--fill',fill(c.ops));
     const op=el('span','operators');c.ops.forEach(o=>op.append(el('span','',OP[o].name.replace('中国',''))));
-    const frequency=direction.key==='ul'?'频点未列':c.arfcn,bw=isFdd(b)?`${c.end-c.start} MHz`:c.bw;
-    btn.append(el('span','tech',c.tech),el('span','arfcn',frequency),el('span','bw',bw),op);
-    btn.title=`${direction.name} ${start}–${end} MHz\n${c.tech} · ${bw}\n${direction.key==='ul'?'上行频点原表未单列':'原表频点 '+c.arfcn}\n${c.ops.map(o=>OP[o].name).join(' / ')}${c.note?'\n'+c.note:''}\n点击切换${isFdd(b)?'上下行配对色块':'色块'}亮显 / 置灰`;
-    btn.setAttribute('aria-label',`${direction.name}，${c.tech}，${start}至${end} MHz，${frequency}，${bw}，${c.ops.map(o=>OP[o].name).join('、')}，切换亮显`);
+    const frequency=direction.key==='ul'?'-':c.arfcn,bw=isFdd(b)?`${c.end-c.start} MHz`:c.bw;
+    const tech=techLabel(c,direction.key);
+    btn.append(el('span','tech',tech),el('span','arfcn',frequency),el('span','bw',bw),op);
+    btn.title=`${direction.name} ${start}–${end} MHz\n${tech} · ${bw}\n${direction.key==='ul'?'-':'原表频点 '+c.arfcn}\n${c.ops.map(o=>OP[o].name).join(' / ')}${c.note?'\n'+c.note:''}\n点击切换${isFdd(b)?'上下行配对色块':'色块'}亮显 / 置灰`;
+    btn.setAttribute('aria-label',`${direction.name}，${tech}，${start}至${end} MHz，${frequency}，${bw}，${c.ops.map(o=>OP[o].name).join('、')}，切换亮显`);
     setState(btn,off.has(c.id));btn.addEventListener('click',()=>{off.has(c.id)?off.delete(c.id):off.add(c.id);syncState();});track.append(btn);
    }
    row.append(label,track);frame.append(row);
@@ -202,7 +204,7 @@ function renderSummary(){
  const table=el('table','summary-table'),thead=el('thead'),tr=el('tr');
  ['频段 / 模式','制式','运营商','下行 / TDD\nMHz','上行\nMHz','原表频点\n非上行频点推算','频宽','当前配置'].forEach(t=>tr.append(el('th','',t)));thead.append(tr);table.append(thead);const tbody=el('tbody');
  for(const {b,c} of records){const row=el('tr');row.dataset.recordId=c.id;const cfg=configurationLabel(b)||'—';
- [b.title+'\n'+b.mode,c.tech,c.ops.map(o=>OP[o].name).join(' / '),`${c.start}–${c.end}`,isFdd(b)?`${c.start-uplinkOffset[b.id]}–${c.end-uplinkOffset[b.id]}`:`${c.start}–${c.end}\n（TDD 共用）`,c.arfcn,c.bw,cfg].forEach(x=>row.append(el('td','',x)));tbody.append(row);}
+ [b.title+'\n'+b.mode,c.uplinkTech?`下行 ${c.tech}\n上行 ${c.uplinkTech}`:c.tech,c.ops.map(o=>OP[o].name).join(' / '),c.uplinkOnly?'—（SUL）':`${c.start}–${c.end}`,c.uplinkOnly?`${c.start}–${c.end}\n（补充上行）`:isFdd(b)?`${c.start-uplinkOffset[b.id]}–${c.end-uplinkOffset[b.id]}`:`${c.start}–${c.end}\n（TDD 共用）`,c.arfcn,c.bw,cfg].forEach(x=>row.append(el('td','',x)));tbody.append(row);}
  table.append(tbody);target.append(table);
  notes.append(el('p','','频宽中的 ×2 表示 FDD 上下行配对；不同制式的重叠范围不重复计算总频宽。频点及配置按原表保留。'));
  for(const b of bands.filter(b=>records.some(r=>r.b.id===b.id))){const note=el('div','summary-note');note.append(el('strong','',b.title+'：'),el('span','',b.note));notes.append(note);}
@@ -241,7 +243,7 @@ function buildExport(){
   y+=29;
   const lanes=b.lanes(configs[b.id]);
   const ticks=[...new Set([b.start,b.end,...lanes.flatMap(l=>l.cells.flatMap(c=>[c.start,c.end]))])].sort((a,b)=>a-b);
-  const directions=isFdd(b)?[{name:'下行',key:'dl',offset:0},{name:'上行',key:'ul',offset:uplinkOffset[b.id]}]:[{name:'TDD',key:'tdd',offset:0}];
+  const directions=isFdd(b)?[{name:'下行',key:'dl',offset:0},{name:'上行',key:'ul',offset:uplinkOffset[b.id]}]:[{name:b.mode.includes('SUL')?'共用刻度':'TDD',key:'tdd',offset:0}];
   for(const d of directions){
    group.append(txt(16,y+17,d.name,16,700));
    ticks.forEach((n,i)=>{const x=left+(n-b.start)/(b.end-b.start)*span;group.append(txt(x,y+16,n-d.offset,12,400,i===0?'start':i===ticks.length-1?'end':'middle'),svgNode('line',{x1:x,x2:x,y1:y+19,y2:y+23,stroke:'#91a4b2'}));});y+=24;
@@ -254,8 +256,8 @@ function buildExport(){
      cg.append(rect(x,y,w,49,paint(c)));cg.append(svgNode('line',{x1:x,x2:x,y1:y,y2:y+49,stroke:'#94a8b8','stroke-width':.6}));
      const color=off.has(c.id)?'#606a75':'#19374d';
      const bw=isFdd(b)?`${c.end-c.start} MHz`:c.bw;
-     cg.append(txt(x+w/2,y+14,`${c.tech} · ${bw}`,14,700,'middle',color));
-     cg.append(txt(x+w/2,y+29,d.key==='ul'?'上行频点未列':c.arfcn,13,400,'middle',color));
+     cg.append(txt(x+w/2,y+14,`${techLabel(c,d.key)} · ${bw}`,14,700,'middle',color));
+     cg.append(txt(x+w/2,y+29,d.key==='ul'?'-':c.arfcn,13,400,'middle',color));
      cg.append(txt(x+w/2,y+43,c.ops.map(o=>OP[o].name.replace('中国','')).join(' / '),13,400,'middle',color));
      group.append(cg);
     }
