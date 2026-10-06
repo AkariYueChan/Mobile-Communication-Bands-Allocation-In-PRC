@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>移动通信频谱 · 交互频谱表</title>
 <style>
 :root{font-family:Inter,"PingFang SC","Microsoft YaHei",sans-serif;color:#182c42;background:#f3f6fa;font-synthesis:none;--mobile:#c9e8fc;--broadcast:#e0d5f8;--telecom:#cceee1;--unicom:#ffdbbf;--other:#e4e8ef}
@@ -41,17 +41,73 @@ body.export-mode .export-sheet>svg{display:block;width:100%!important;height:100
 }
 
 .rail-switch{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#3b536b;cursor:pointer}.rail-switch input{width:15px;height:15px;accent-color:#146044;margin:0}
+:root{--mhz-px:12px;--unit-width:60px}.plot{max-width:none;flex-shrink:0}.lane-name{width:55px!important}.scale{margin-left:55px!important}.direction-title{margin-left:55px!important}.track:after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:repeating-linear-gradient(to right,transparent 0,transparent calc(var(--unit-width) - 1px),#243b531a calc(var(--unit-width) - 1px),#243b531a var(--unit-width))}.cell:hover{z-index:3}
+/* Phone reference: 440 × 956 CSS layout; real viewport and safe areas remain adaptive. */
+:root{--mhz-render-px:var(--mhz-px);--unit-render-width:var(--unit-width)}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.mobile-hint{display:none}
+.track:after{background:repeating-linear-gradient(to right,transparent 0,transparent calc(var(--unit-render-width) - 1px),#243b531a calc(var(--unit-render-width) - 1px),#243b531a var(--unit-render-width))}
+@media screen and (max-width:700px){
+ :root{--mhz-render-px:calc(var(--mhz-px) * .5);--unit-render-width:calc(var(--unit-width) * .5)}
+ body{width:100%;min-width:0;overflow-x:clip}
+ .shell{width:100%;min-width:0;padding:calc(16px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+ .heading{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}
+ .heading>div{min-width:0}.eyebrow{font-size:9px;letter-spacing:1.4px;margin:0 0 7px}h1{font-size:25px;line-height:1.25;letter-spacing:-.5px}.intro{font-size:12px;line-height:1.7;margin-top:8px}
+ .github{min-height:44px;padding:0 12px;font-size:12px;gap:6px;border-radius:10px}.github svg{width:18px;height:18px}
+ .legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px;margin:17px 0;font-size:12px}.swatch{width:24px;height:15px;flex-shrink:0}
+ .toolbar{position:static;display:block;padding:12px 0;margin-bottom:12px;backdrop-filter:none}
+ .toolbar>.tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+ .toolbar .tool{min-width:0;width:100%;min-height:44px;padding:10px 8px;font-size:13px;border-radius:9px;white-space:normal;line-height:1.4}
+ .toolbar select.tool{font-size:16px}.toolbar .zoom{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(60px,1fr) auto;gap:12px;min-height:44px;font-size:12px;padding:4px 2px}
+ .zoom input{width:100%;min-width:0;height:32px;margin:0}.status{font-size:12px;margin-top:8px;line-height:1.5}
+ .tool,.config,.rail-switch{touch-action:manipulation}
+ .notes{font-size:11px;line-height:1.75;overflow-wrap:anywhere}.mobile-hint{display:block;font-size:12px;color:#527286;line-height:1.6;margin:0 0 12px}
+ .band{border-radius:10px;margin-bottom:14px;scroll-margin-top:12px;min-width:0}.band-head{padding:12px 10px 8px;gap:8px;display:block}.band-title{gap:7px;align-items:center}.band-title h2{font-size:18px}.band-title .label{font-size:11px}.tag{font-size:9px}
+ .band-settings{gap:8px;margin-top:8px;min-width:0;flex-wrap:wrap}.band-settings:empty{display:none}.extent{display:none}.config{width:100%;max-width:none;min-height:44px;font-size:16px;padding:8px 10px;border-radius:8px}
+ .rail-switch{min-height:44px;width:100%;font-size:12px;gap:10px;padding:5px 0}.rail-switch input{width:22px;height:22px;flex-shrink:0}
+ .scroller{max-width:100%;padding:0 8px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:thin}
+ .plot{min-width:0;max-width:none}.lane-name{position:sticky;left:0;z-index:4;background:#fff;width:55px!important;padding:12px 3px 0 0;font-size:10px;overflow-wrap:anywhere}
+ .scale{height:43px}.tick{font-size:10px;writing-mode:vertical-rl;bottom:4px}.direction-title{font-size:11px;margin-top:9px;white-space:nowrap}.direction-title span{font-size:9px;margin-left:6px}
+ .track{height:calc(var(--lane-height) + 40px)}.cell{padding:5px 1px;gap:4px;-webkit-tap-highlight-color:transparent}.tech{font-size:12px;line-height:1.25}.arfcn,.bw,.operators{font-size:10px;line-height:1.4}.operators span{display:block}.operators span+span:before{content:""}
+ .band-foot{padding:7px 10px;font-size:11px;line-height:1.75}.raw{padding:0 10px 7px}.raw summary{min-height:44px;display:flex;align-items:center;font-size:11px}.raw-wrap{max-width:100%;overflow-x:auto}
+ .summary-panel{padding:12px;min-width:0;scroll-margin-top:12px}.summary-actions{gap:12px}.summary-actions h2{font-size:19px}.summary-actions .tools{display:grid;grid-template-columns:minmax(0,1fr) auto;width:100%}.summary-actions .tool{min-height:44px;font-size:12px;padding:8px}.summary-panel p{font-size:12px;line-height:1.6}
+ #summaryTable{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}.summary-panel table{min-width:900px}.summary-panel th,.summary-panel td{font-size:12px;padding:8px 6px}.summary-note{font-size:11px;line-height:1.7}
+ .footer{font-size:11px;line-height:1.8;overflow-wrap:anywhere}
+ .export-controls{top:0;padding:calc(10px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));gap:8px}.export-controls .tools{display:grid;grid-template-columns:auto minmax(0,1fr);width:100%;gap:8px}.export-controls .tool{min-height:44px;font-size:13px;padding:8px}.export-controls>span{font-size:11px;line-height:1.6}
+ .export-sheet{width:100%;padding:4px;margin:10px auto calc(16px + env(safe-area-inset-bottom))}
+}
+@media screen and (max-width:370px){.shell{padding-left:8px;padding-right:8px}.heading{gap:8px}h1{font-size:22px}.github{padding:0 9px}.toolbar .tool{font-size:12px}.band-title{gap:5px}}
+@media screen and (orientation:landscape) and (max-height:500px){.toolbar{position:static}.shell{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}.export-controls{position:static}}
+
+
+/* 独立频段示意图：撤回跨频段固定长度，手机也完整适应行宽。 */
+.plot{width:100%;min-width:0;max-width:100%}.track:after{display:none}
+.cell-frequencies{display:flex;justify-content:space-between;align-items:center;gap:2px;width:100%;font:9px/1.3 ui-monospace,SFMono-Regular,Consolas,monospace;flex-wrap:wrap}.cell-frequencies .center{font-weight:650}.cell-frequencies .end{margin-left:auto}.cell{gap:4px}.track{height:calc(var(--lane-height) + 22px)}
+@media screen and (max-width:700px){.scroller{overflow-x:hidden}.plot{min-width:0;max-width:100%}.lane-name{position:static}.cell{padding:5px 1px;gap:4px}.track{height:calc(var(--lane-height) + 75px)}.tech{font-size:10px}.arfcn,.bw,.operators{font-size:9px}.cell-frequencies{justify-content:center;font-size:9px;overflow-wrap:anywhere}.cell-frequencies .edge{display:none}.cell-frequencies .center{max-width:100%;line-height:1.5}.direction-title{white-space:normal}.direction-title span{display:block;margin:0}.scale{height:48px}}
+
+
+/* 频率只在每条频谱上方的刻度区显示，中心与边界分两层避免重叠。 */
+.scale{height:43px}.tick-center{top:2px;bottom:auto!important;color:#426c89;font-weight:650}.tick-center:after{display:none}.track{height:var(--lane-height)}
+@media screen and (max-width:700px){.scale{height:88px}.tick-center{top:0;bottom:auto!important}.track{height:calc(var(--lane-height) + 40px)}
+.toolbar{padding:8px 0}.toolbar>.tools{display:flex;flex-wrap:wrap;gap:6px;width:100%}.toolbar .tool,.toolbar select.tool{width:auto;min-width:0;min-height:0;padding:6px 8px;font-size:11px;line-height:1.4;border-radius:6px}.toolbar .zoom{display:flex;flex:0 1 auto;gap:7px;min-height:0;padding:3px 0;font-size:11px}.toolbar .zoom input{width:86px;height:22px}.toolbar .status{font-size:11px;margin-top:6px}.github{min-height:0;padding:7px 9px;border-radius:6px;font-size:11px}.github svg{width:16px;height:16px}
+.export-controls{padding:8px max(10px,env(safe-area-inset-right)) 8px max(10px,env(safe-area-inset-left))}.export-controls .tools{display:flex;flex-wrap:wrap;gap:6px}.export-controls .tool{min-height:0;padding:6px 8px;font-size:11px}.summary-actions .tools{display:flex;flex-wrap:wrap}.summary-actions .tool{min-height:0;padding:6px 8px;font-size:11px}
+}
+
+
+.spectrum-frame{position:relative}.spectrum-frame:after{content:"";position:absolute;left:55px;right:0;top:0;bottom:0;border:1px solid #9caebd;pointer-events:none;z-index:3}.spectrum-frame .track{border:0}.spectrum-frame .cell{border-top:0;border-bottom:0;border-right:1px solid #91a5b780}.spectrum-frame .lane+.lane .track:before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:#ffffffb3;z-index:3;pointer-events:none}.scale{height:28px}.tick-center{display:none}
+@media screen and (max-width:700px){.scale{height:48px}}
+
 </style>
 </head>
 <body><main class="shell">
 <header class="heading"><div><div class="eyebrow">MOBILE SPECTRUM ATLAS</div><h1>移动通信频谱</h1><p class="intro">按频宽展开每一段频谱。点击色块置灰，再次点击恢复；文字与频段框架始终保留。</p></div><a id="github" class="tool github" href="https://github.com/AkariYueChan/Mobile-Communication-Bands-Allocation-In-PRC" target="_blank" rel="noopener noreferrer" title="打开 GitHub"><svg viewBox="0 0 16 16" width="19" height="19" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub ↗ <span id="githubHint"></span></a></header>
 <div class="legend" aria-label="运营商颜色图例"><span class="key"><i class="swatch" style="background:var(--mobile)"></i>中国移动</span><span class="key"><i class="swatch" style="background:var(--telecom)"></i>中国电信</span><span class="key"><i class="swatch" style="background:var(--unicom)"></i>中国联通</span><span class="key"><i class="swatch" style="background:var(--broadcast)"></i>中国广电</span><span class="key"><i class="swatch shared"></i>共建共享（条纹）</span><span class="key"><i class="swatch" style="background:var(--other)"></i>铁路 / 集群</span></div>
-<div class="toolbar"><div class="tools"><button id="exportButton" class="tool export-button">导出 · A3 频谱图</button><select id="jump" class="tool" aria-label="跳转至频段"><option value="">跳转频段</option></select><button class="tool primary" id="restore">恢复全部色块</button><button class="tool" id="mute">全部置灰</button><button class="tool primary" id="summarize">汇总未置灰频段</button><button class="tool" id="fit">适应宽度</button><label class="zoom">显示大小 <input id="zoom" type="range" min="50" max="150" step="5" value="75"><span id="zoomValue">75%</span></label></div><div class="status" id="status" aria-live="polite"></div></div>
-<div class="notes"><p>每行独立比例尺，格子宽度与 MHz 成正比。FDD 分别绘制上行与下行，配对色块同步置灰；上行频点未单列时不作推算。默认紧凑显示，布局自动适应窗口宽度。</p></div>
+<div class="toolbar"><div class="tools"><button id="exportButton" class="tool export-button">导出 · A3 频谱图</button><select id="jump" class="tool" aria-label="跳转至频段"><option value="">跳转频段</option></select><button class="tool primary" id="restore">恢复全部色块</button><button class="tool" id="mute">全部置灰</button><button class="tool primary" id="summarize">汇总未置灰频段</button><button class="tool" id="fit">紧凑比例</button><label class="zoom">显示大小 <input id="zoom" type="range" min="50" max="150" step="5" value="75"><span id="zoomValue">75%</span></label></div><div class="status" id="status" aria-live="polite"></div></div>
+<div class="notes"><p>每个频段独立适应行宽，行内色块按频宽比例绘制。NR 与 LTE/UMTS 合并在同一外框内，共用上方频率刻度（MHz），浅色横线区分制式。FDD 分别绘制上行与下行，配对色块同步置灰；上行频点未单列时不作推算。不同频段之间不比较色块的绝对长度。</p></div>
 <section id="summaryPanel" class="summary-panel" hidden aria-label="未置灰频段汇总">
 <div class="summary-actions"><h2>未置灰频段汇总</h2><div class="tools"><button id="printSummary" class="tool primary">打印汇总 / 保存 PDF</button><button id="closeSummary" class="tool">收起汇总</button></div></div>
 <p id="summaryMeta"></p><div id="summaryTable"></div><div id="summaryNotes"></div>
-</section><div id="bands"></div>
+</section><p class="mobile-hint">频率刻度共用，NR 与 LTE 上下对齐 · 点击色块开关</p><div id="bands"></div>
 <div class="notes"><p>绘制范围仅包含原表列出的频谱。NR 与 LTE / UMTS 上下分层表示不同制式或重耕配置，不表示它们必然同时占用全部频宽。斜纹颜色依据运营商栏；仅部分地区共享的情况保留在备注中。</p><p>频点按原表保留，未根据频点反推或修正频率边界。合并单元格中的多组 NR 频点作为整块参考，不擅自逐一匹配配置。特殊配置可在各行切换，详细原始数据可展开查看。</p></div>
 <footer class="footer"><span>13 个频段 · 本地 HTML · 无需联网</span><span id="saveStatus">置灰状态自动保存在当前浏览器</span></footer>
 </main>
@@ -67,13 +123,13 @@ const lane=(name,cells)=>({name,cells});
 const bands=[
 {id:'b28',title:'700 MHz',label:'Band 28',mode:'FDD',rows:[2,3],start:758,end:803,note:'上行 703–748 MHz。n28B 为部分地区试验配置；原表另注 n83 SUL 试验。',lanes:()=>[lane('NR',[cell('28a',758,788,'n28A','152650',['M','G'],'30 MHz ×2'),cell('28b',788,803,'n28B','158650',['G'],'15 MHz ×2')])]},
 {id:'cluster',title:'800 MHz',label:'集群系统',mode:'FDD',rows:[4],start:851,end:866,note:'上行 806–821 MHz。集群系统专用频段。',lanes:()=>[lane('2G',[cell('cluster',851,866,'集群','—',['S'],'15 MHz ×2')])]},
-{id:'b5',title:'850 MHz',label:'Band 5',mode:'FDD · DSS',rows:[5,6],start:870,end:885,choices:[['10','10 MHz ×2'],['15','15 MHz ×2（部分地区）']],default:'10',note:'上行 825–835 / 840 MHz。10 与 15MHz 为替代配置；10MHz 时末端保留未选配置范围。',lanes:v=>[lane('NR',[cell('5nr'+v,870,870+Number(v),'n5',v==='15'?'176190':'174750',['T'],v+' MHz ×2')]),lane('LTE',[cell('5lte'+v,870,870+Number(v),'B5','2452',['T'],v+' MHz ×2')])]},
-{id:'b8',title:'900 MHz',label:'Band 8',mode:'FDD',rows:[7,8,9,10],start:930,end:959,note:'上行 885–914 MHz。移动 LTE 在偏远地区与广电共享；联通 DSS 在偏远地区与电信共享。原表另注 n81 SUL。',lanes:()=>[lane('NR',[cell('8nr',949,959,'n8','190350',['U'],'10 MHz ×2','4G/5G DSS')]),lane('LTE / 2G',[cell('gsmr',930,934,'GSM-R','—',['R'],'4 MHz ×2'),cell('8lteM',934,944,'B8','3590',['M'],'10 MHz ×2'),cell('gsm',944,949,'GSM / NB-IoT','—',['M'],'5 MHz ×2'),cell('8lteU',949,959,'B8','3740',['U'],'10 MHz ×2')])]},
-{id:'b3',title:'1800 MHz',label:'Band 3',mode:'FDD · DSS',rows:[11,12,13,14,15],start:1805,end:1880,note:'上行 1710–1785 MHz。n3 DSS 覆盖电信/联通下行 1830–1880MHz、上行 1735–1785MHz，与下方三个 LTE 区块共享 50MHz。1425 仅部分地区存在现网；电信 / 联通可能存在频点或频段位移。',lanes:()=>[lane('NR',[cell('3nr',1830,1880,'n3 · DSS','368930',['T','U'],'50 MHz ×2','电信/联通 DSS，与 LTE 共享频谱')]),lane('LTE',[cell('3a',1805,1825,'B3','1300',['M','G'],'20 MHz ×2'),cell('3b',1825,1830,'B3','1425',['M','G'],'5 MHz ×2'),cell('3c',1830,1840,'B3','1506',['T','U'],'10 MHz ×2'),cell('3d',1840,1860,'B3','1650',['T','U'],'20 MHz ×2'),cell('3e',1860,1880,'B3','1825 / 1850',['T','U'],'20 MHz ×2')])]},
+{id:'b5',title:'850 MHz',label:'Band 5',mode:'FDD · HDSS',rows:[5,6],start:870,end:885,choices:[['10','10 MHz ×2'],['15','15 MHz ×2（部分地区）']],default:'10',note:'上行 825–835 / 840 MHz。10 与 15MHz 为替代配置；10MHz 时末端保留未选配置范围。',lanes:v=>[lane('NR',[cell('5nr'+v,870,870+Number(v),'n5 · HDSS',v==='15'?'176190':'174750',['T'],v+' MHz ×2')]),lane('LTE',[cell('5lte'+v,870,870+Number(v),'B5','2452',['T'],v+' MHz ×2')])]},
+{id:'b8',title:'900 MHz',label:'Band 8',mode:'FDD · HDSS',rows:[7,8,9,10],start:930,end:959,note:'上行 885–914 MHz。移动 LTE 在偏远地区与广电共享；联通 HDSS 在偏远地区与电信共享。原表另注 n81 SUL。',lanes:()=>[lane('NR',[cell('8nr',949,959,'n8 · HDSS','190350',['U'],'10 MHz ×2','4G/5G HDSS')]),lane('LTE / 2G',[cell('gsmr',930,934,'GSM-R','—',['R'],'4 MHz ×2'),cell('8lteM',934,944,'B8','3590',['M'],'10 MHz ×2'),cell('gsm',944,949,'GSM / NB-IoT','—',['M'],'5 MHz ×2'),cell('8lteU',949,959,'B8','3740',['U'],'10 MHz ×2')])]},
+{id:'b3',title:'1800 MHz',label:'Band 3',mode:'FDD · HDSS',rows:[11,12,13,14,15],start:1805,end:1880,note:'上行 1710–1785 MHz。n3 HDSS 覆盖电信/联通下行 1830–1880MHz、上行 1735–1785MHz，与下方三个 LTE 区块共享 50MHz。1425 仅部分地区存在现网；电信 / 联通可能存在频点或频段位移。',lanes:()=>[lane('NR',[cell('3nr',1830,1880,'n3 · HDSS','368930 / 370850',['T','U'],'50 MHz ×2','电信/联通 HDSS，与 LTE 共享频谱')]),lane('LTE',[cell('3a',1805,1825,'B3','1300',['M','G'],'20 MHz ×2'),cell('3b',1825,1830,'B3','1425',['M','G'],'5 MHz ×2'),cell('3c',1830,1840,'B3','1506',['T','U'],'10 MHz ×2'),cell('3d',1840,1860,'B3','1650',['T','U'],'20 MHz ×2'),cell('3e',1860,1880,'B3','1825 / 1850',['T','U'],'20 MHz ×2')])]},
 {id:'b39',title:'1900 MHz',label:'Band 39',mode:'TDD',rows:[16,17],start:1885,end:1915,choices:[['20','20 + 10 MHz'],['15','15 + 15 MHz']],default:'20',note:'两种区块划分按原表成组切换。部分地区作为 NSA 锚点或试验 n98 SUL。',lanes:v=>[lane('LTE',v==='20'?[cell('39a20',1885,1905,'B39','38400',['M']),cell('39b10',1905,1915,'B39','38544',['M'])]:[cell('39a15',1885,1900,'B39','38375',['M']),cell('39b15',1900,1915,'B39','38525',['M'])])]},
 {id:'b34',title:'2000 MHz',label:'Band 34',mode:'TDD',rows:[18],start:2010,end:2025,note:'TD-SCDMA 重耕频段；部分地区试验 n95 SUL。',lanes:()=>[lane('LTE',[cell('34',2010,2025,'B34','36275',['M'])])]},
 {id:'b1',title:'2100 MHz',label:'Band 1',mode:'FDD',rows:[19,20,21,22],start:2110,end:2170,choices:[['20','NR 20 MHz'],['40','NR 40 MHz'],['45','NR 45 MHz（部分地区）']],default:'40',note:'上行 1920–1980 MHz。NR 以 E1–E9 的合并范围作布局示意；频点未逐一绑定带宽。LTE 按 20MHz 配置绘制（原表亦列 15MHz）；NR 20MHz 对齐 B1 300（下行 2130–2150MHz）；铁路开关独立于 NR 配置，开启后覆盖 UMTS，显示联通/铁路NR-R。',lanes:v=>[lane('NR',[cell('1nr'+v,v==='20'?2130:2110,v==='45'?2155:2150,'n1','422910 / 428910 / 422930 / 423630',['T','U'],v+' MHz ×2','频点照录原表 G19:G21；此处不推定每个频点的配置对应关系。')]),lane('LTE / UMTS',[cell('1a',2110,2130,'B1','75 / 100',['T','U'],'20 MHz ×2','原表可用带宽 15/20MHz；此处按区块边界画20MHz。'),cell('1b',2130,2150,'B1','300',['T','U'],'20 MHz ×2'),railEnabled?cell('1rail',2150,2170,'B1','500',['U','Q'],'20 MHz ×2','联通/铁路NR-R；铁路试验频段，仅部分地区'):cell('1umts',2150,2155,'UMTS','10763',['U'],'5 MHz ×2','仅部分地区；与 NR 层为替代或重耕关系')])]},
-{id:'b40',title:'2300 MHz',label:'Band 40',mode:'TDD',rows:[23,24,25,26,27],start:2300,end:2390,note:'仅室内。NR 465850 为 50MHz，覆盖 2320–2370MHz，对齐下方三个 LTE 区块（20 + 20 + 10MHz）。电信区块原表标注“未见现网”。',lanes:()=>[lane('NR',[cell('40nr',2320,2370,'n40','465850',['M','G'],'50 MHz','部分地区试验重耕；覆盖三个 LTE 区块')]),lane('LTE',[cell('40a',2300,2320,'B40','38750',['U']),cell('40b',2320,2340,'B40','38950',['M','G']),cell('40c',2340,2360,'B40','39148',['M','G']),cell('40d',2360,2370,'B40','39292',['M','G']),cell('40e',2370,2390,'B40','—',['T'],'20 MHz','未见现网')])]},
+{id:'b40',title:'2300 MHz',label:'Band 40',mode:'TDD',rows:[23,24,25,26,27],start:2300,end:2390,note:'仅室内。NR 465850 为中国移动单独运营的 50MHz，覆盖 2320–2370MHz，对齐下方三个 LTE 区块（20 + 20 + 10MHz）。电信区块原表标注“未见现网”。',lanes:()=>[lane('NR',[cell('40nr',2320,2370,'n40','465850',['M'],'50 MHz','部分地区试验重耕；覆盖三个 LTE 区块')]),lane('LTE',[cell('40a',2300,2320,'B40','38750',['U']),cell('40b',2320,2340,'B40','38950',['M','G']),cell('40c',2340,2360,'B40','39148',['M','G']),cell('40d',2360,2370,'B40','39292',['M','G']),cell('40e',2370,2390,'B40','—',['T'],'20 MHz','未见现网')])]},
 {id:'b41',title:'2600 MHz',label:'Band 38 / 41',mode:'TDD',rows:[28,29,30,31,32,33,34,35],start:2515,end:2675,note:'NR 100MHz 对齐 D4–D2，60MHz 对齐 D3 / D7 / D8。B38 仅中国移动、仅农村地区；507150 / 525150 为高铁专网频点。',lanes:()=>[lane('NR',[cell('41nr100',2515,2615,'n41','504990 / 507150',['M','G'],'100 MHz'),cell('41nr60',2615,2675,'n41','524910 / 533070 / 525150',['M','G'],'60 MHz')]),lane('LTE',[cell('38a',2575,2595,'B38','37900',['M']),cell('38b',2595,2615,'B38','38098',['M']),cell('41a',2615,2635,'B41','40936',['M','G']),cell('41b',2635,2655,'B41','41134',['M','G']),cell('41c',2655,2675,'B41','41332',['M','G'])])]},
 {id:'b78',title:'3500 MHz',label:'Band 78',mode:'TDD',rows:[36,37,38,39,40],start:3300,end:3800,note:'3300–3400MHz 仅室内，电信 / 联通 / 广电三家共享。627744 / 634464 为高铁专网；移动 3600–3800MHz 为部分地区试验配置。',lanes:()=>[lane('NR',[cell('78a',3300,3400,'n78','620640 / 623328',['T','U','G']),cell('78b',3400,3500,'n78','627264 / 627744',['T','U']),cell('78c',3500,3600,'n78','633984 / 634464',['T','U']),cell('78d',3600,3700,'n78','643296',['M']),cell('78e',3700,3800,'n78','649920',['M'])])]},
 {id:'b79',title:'4800 MHz',label:'Band 79',mode:'TDD',rows:[41,42,43],start:4800,end:5000,choices:[['100','100 + 100 MHz'],['60','100 + 60 MHz']],default:'100',note:'4900MHz 起的 60 / 100MHz 为替代配置，100MHz 仅部分地区。颜色按原表移动 / 广电共享；频谱到 5000MHz 截止，不延伸未列频谱。',lanes:v=>[lane('NR',[cell('79a',4800,4900,'n79','721824 / 723360',['M','G']),cell('79b'+v,4900,4900+Number(v),'n79',v==='60'?'727968':'727968 / 729504',['M','G'])])]},
@@ -101,13 +157,14 @@ function refreshStatus(){const all=currentRecords(),n=selectedRecords().length;d
 function setState(button,isOff){button.classList.toggle('off',isOff);button.setAttribute('aria-pressed',String(!isOff));}
 function syncState(){document.querySelectorAll('.cell').forEach(btn=>setState(btn,off.has(btn.dataset.id)));save();refreshStatus();}
 function drawPlot(b,container){
- container.replaceChildren();const lanes=b.lanes(configs[b.id]);
+ container.replaceChildren();container.dataset.span=b.end-b.start;container.style.width='100%';const lanes=b.lanes(configs[b.id]);
  const ticks=[...new Set([b.start,b.end,...lanes.flatMap(l=>l.cells.flatMap(c=>[c.start,c.end]))])].sort((a,b)=>a-b);
  const directions=isFdd(b)?[{name:'下行 DL',key:'dl',offset:0},{name:'上行 UL',key:'ul',offset:uplinkOffset[b.id]}]:[{name:'上下行共用 TDD',key:'tdd',offset:0}];
  for(const direction of directions){
   const heading=el('div','direction-title',direction.name);heading.append(el('span','',direction.key==='ul'?'MHz · 上行频点原表未单列':'MHz'));container.append(heading);
-  const scale=el('div','scale');scale.setAttribute('aria-label',direction.name+'频率，单位 MHz');
-  for(const n of ticks){const t=el('span','tick',n-direction.offset);t.style.left=`${(n-b.start)/(b.end-b.start)*100}%`;scale.append(t);}container.append(scale);
+  const scale=el('div','scale');scale.setAttribute('aria-label',direction.name+' 共用频率刻度，MHz');
+  for(const n of ticks){const t=el('span','tick',n-direction.offset);t.style.left=`${(n-b.start)/(b.end-b.start)*100}%`;t.style.transform=n===b.start?'none':n===b.end?'translateX(-100%)':'translateX(-50%)';scale.append(t);}container.append(scale);
+  const frame=el('div','spectrum-frame');frame.dataset.direction=direction.key;
   for(const l of lanes){
    const row=el('div','lane'),label=el('div','lane-name',l.name),track=el('div','track');track.append(el('span','empty',l.cells.length?'':'原表未列该制式配置'));
    for(const c of l.cells){
@@ -120,8 +177,9 @@ function drawPlot(b,container){
     btn.setAttribute('aria-label',`${direction.name}，${c.tech}，${start}至${end} MHz，${frequency}，${bw}，${c.ops.map(o=>OP[o].name).join('、')}，切换亮显`);
     setState(btn,off.has(c.id));btn.addEventListener('click',()=>{off.has(c.id)?off.delete(c.id):off.add(c.id);syncState();});track.append(btn);
    }
-   row.append(label,track);container.append(row);
+   row.append(label,track);frame.append(row);
   }
+  container.append(frame);
  }
 }
 function sourceDetails(b){const d=el('details','raw'),s=el('summary','',`查看原表数据与备注 · Sheet1 第 ${b.rows[0]}–${b.rows.at(-1)} 行`);const wrap=el('div','raw-wrap'),table=el('table'),head=el('tr');['行','区块','运营商','下行 / TDD（MHz）','上行（MHz）','频点（原表 F / G 列）','可用频宽','状态','备注'].forEach(t=>head.append(el('th','',t)));table.append(head);for(const r of SOURCE_ROWS.filter(r=>b.rows.includes(r.row))){const v=r.values,tr=el('tr');[r.row,v[1],v[2],v[3],v[4],[v[5],v[6]].filter((x,i,a)=>x&&a.indexOf(x)===i).join('\n'),v[7],v[8],v[13]].forEach(x=>tr.append(el('td','',x??'—')));table.append(tr);}wrap.append(table);d.append(s,wrap);return d;}
@@ -153,7 +211,7 @@ function renderSummary(){
 document.getElementById('restore').addEventListener('click',()=>{off.clear();syncState();});
 document.getElementById('mute').addEventListener('click',()=>{currentRecords().forEach(({c})=>off.add(c.id));syncState();});
 document.getElementById('jump').addEventListener('change',e=>{if(e.target.value)document.getElementById(e.target.value).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});});
-function applyDensity(value){const z=Math.max(50,Math.min(150,Number(value))),style=document.documentElement.style;style.setProperty('--lane-height',Math.round(70+z*.56)+'px');style.setProperty('--tech-font',Math.max(11,Math.round(10+z*.053))+'px');style.setProperty('--cell-font',Math.max(9,Math.round(8+z*.04))+'px');style.setProperty('--cell-gap',Math.max(2,Math.round(z/20))+'px');document.getElementById('zoom').value=z;document.getElementById('zoomValue').textContent=z+'%';}
+function applyDensity(value){const z=Math.max(50,Math.min(150,Number(value))),style=document.documentElement.style;style.setProperty('--mhz-px',(12*z/75)+'px');style.setProperty('--unit-width',(60*z/75)+'px');style.setProperty('--lane-height',Math.round(70+z*.56)+'px');style.setProperty('--tech-font',Math.max(11,Math.round(10+z*.053))+'px');style.setProperty('--cell-font',Math.max(9,Math.round(8+z*.04))+'px');style.setProperty('--cell-gap',Math.max(2,Math.round(z/20))+'px');document.getElementById('zoom').value=z;document.getElementById('zoomValue').textContent=z+'%';}
 document.getElementById('zoom').addEventListener('input',e=>applyDensity(e.target.value));
 document.getElementById('fit').addEventListener('click',()=>applyDensity(50));
 document.getElementById('summarize').addEventListener('click',()=>{renderSummary();const p=document.getElementById('summaryPanel');p.hidden=false;p.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});});
@@ -173,40 +231,43 @@ function buildExport(){
  function txt(x,y,text,size=15,weight=400,anchor='start',color='#213b50'){return svgNode('text',{x,y,'font-size':size,'font-weight':weight,'text-anchor':anchor,fill:color,'font-family':'Arial, PingFang SC, Microsoft YaHei, sans-serif'},text);}
  function rect(x,y,w,h,fill,stroke='none'){return svgNode('rect',{x,y,width:w,height:h,fill,stroke,'stroke-width':.8});}
  function paint(c){if(off.has(c.id))return '#e2e5e9';if(c.ops.length===1)return OP[c.ops[0]].color;const id='stripe-'+c.ops.join('');if(!defs.children.length||![...defs.children].some(n=>n.getAttribute('id')===id)){const p=svgNode('pattern',{id,width:c.ops.length*9,height:c.ops.length*9,patternUnits:'userSpaceOnUse',patternTransform:'rotate(35)'});c.ops.forEach((o,i)=>p.append(rect(i*9,0,9,c.ops.length*9,OP[o].color)));defs.append(p);}return `url(#${id})`;}
- svg.append(txt(16,32,'移动通信频谱',27,700),txt(right,32,'当前配置 · FDD 上下行配对 · 单位 MHz',16,400,'end'));
+ svg.append(txt(16,32,'移动通信频谱',27,700),txt(right,32,'独立行宽 · 共用频率刻度 · 单位 MHz',16,400,'end'));
  ['M','T','U','G'].forEach((o,i)=>{svg.append(rect(16+i*205,48,24,15,OP[o].color,'#aab8c3'),txt(48+i*205,61,OP[o].name,15));});svg.append(rect(840,48,24,15,'#e2e5e9','#aab8c3'),txt(872,61,'已置灰（保留框架）',15));
  let y=82;
  for(const b of bands){
   const config=configurationLabel(b);
   const group=svgNode('g',{'data-band':b.id,'data-config':configs[b.id]||''});svg.append(group);
-  group.append(rect(8,y,W-16,26,'#f2f5f7'),txt(16,y+19,`${b.title}  ${b.label}  ·  ${b.mode}`,18,700),txt(right,y+19,config+(b.id==='b40'?' · NR 50MHz（2320–2370）':''),14,400,'end'));
+  group.append(rect(8,y,W-16,26,'#f2f5f7'),txt(16,y+19,`${b.title}  ${b.label}  ·  ${b.mode}`,18,700),txt(right,y+19,config,14,400,'end'));
   y+=29;
   const lanes=b.lanes(configs[b.id]);
   const ticks=[...new Set([b.start,b.end,...lanes.flatMap(l=>l.cells.flatMap(c=>[c.start,c.end]))])].sort((a,b)=>a-b);
   const directions=isFdd(b)?[{name:'下行',key:'dl',offset:0},{name:'上行',key:'ul',offset:uplinkOffset[b.id]}]:[{name:'TDD',key:'tdd',offset:0}];
   for(const d of directions){
    group.append(txt(16,y+17,d.name,16,700));
-   ticks.forEach((n,i)=>{const x=left+(n-b.start)/(b.end-b.start)*span;group.append(txt(x,y+16,n-d.offset,14,400,i===0?'start':i===ticks.length-1?'end':'middle'),svgNode('line',{x1:x,x2:x,y1:y+19,y2:y+23,stroke:'#91a4b2'}));});y+=24;
+   ticks.forEach((n,i)=>{const x=left+(n-b.start)/(b.end-b.start)*span;group.append(txt(x,y+16,n-d.offset,12,400,i===0?'start':i===ticks.length-1?'end':'middle'),svgNode('line',{x1:x,x2:x,y1:y+19,y2:y+23,stroke:'#91a4b2'}));});y+=24;
+   const frameTop=y;
    for(const l of lanes){
-    group.append(txt(16,y+26,l.name.replace(' / ','/'),12),rect(left,y,span,49,'#fafbfc','#b7c4ce'));
+    group.append(txt(16,y+26,l.name.replace(' / ','/'),12),rect(left,y,span,49,'#fafbfc'));
     for(const c of l.cells){
      const x=left+(c.start-b.start)/(b.end-b.start)*span,w=(c.end-c.start)/(b.end-b.start)*span;
      const cg=svgNode('g',{'data-record':c.id,'data-direction':d.key,'data-off':off.has(c.id),'data-start':c.start-d.offset,'data-end':c.end-d.offset});
-     cg.append(rect(x,y,w,49,paint(c),'#94a8b8'));
+     cg.append(rect(x,y,w,49,paint(c)));cg.append(svgNode('line',{x1:x,x2:x,y1:y,y2:y+49,stroke:'#94a8b8','stroke-width':.6}));
      const color=off.has(c.id)?'#606a75':'#19374d';
      const bw=isFdd(b)?`${c.end-c.start} MHz`:c.bw;
-     cg.append(txt(x+w/2,y+14,`${c.tech} · ${bw}`,16,700,'middle',color));
-     cg.append(txt(x+w/2,y+29,d.key==='ul'?'上行频点未列':c.arfcn,15,400,'middle',color));
-     cg.append(txt(x+w/2,y+43,c.ops.map(o=>OP[o].name.replace('中国','')).join(' / '),15,400,'middle',color));
+     cg.append(txt(x+w/2,y+14,`${c.tech} · ${bw}`,14,700,'middle',color));
+     cg.append(txt(x+w/2,y+29,d.key==='ul'?'上行频点未列':c.arfcn,13,400,'middle',color));
+     cg.append(txt(x+w/2,y+43,c.ops.map(o=>OP[o].name.replace('中国','')).join(' / '),13,400,'middle',color));
      group.append(cg);
     }
     y+=49;
    }
+   const outer=rect(left,frameTop,span,y-frameTop,'none','#8b9faf');outer.setAttribute('data-frame',b.id+'-'+d.key);group.append(outer);
+   for(let i=1;i<lanes.length;i++){const lineY=frameTop+i*49;group.append(svgNode('line',{x1:left,x2:right,y1:lineY,y2:lineY,stroke:'#ffffff','stroke-opacity':.7,'stroke-width':1.2}));}
    y+=3;
   }
   y+=8;
  }
- svg.append(txt(16,y+13,'条纹表示共建共享；NR 与 LTE/UMTS 为分层配置示意。频点保留原表值；仅打印当前选定配置。',14));y+=24;
+ svg.append(txt(16,y+13,'条纹表示共建共享；NR 与 LTE/UMTS 为分层配置示意。共用频率刻度；仅打印当前选定配置。',14));y+=24;
  svg.setAttribute('viewBox',`0 0 ${W} ${y}`);svg.setAttribute('preserveAspectRatio','xMidYMin meet');
  document.getElementById('exportSheet').replaceChildren(svg);
  return {width:W,height:y,records:currentRecords().length};
